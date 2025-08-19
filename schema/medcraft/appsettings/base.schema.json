@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MedCraft appsettings (extended)",
+  "description": "Core settings for MedCraft application appsettings files. Extends base appsettings.json with additional custom application properties.",
+  "allOf": [
+    { "$ref": "https://json.schemastore.org/appsettings.json" },
+    {
+        "type": "object",
+        "properties": {
+            "UploadScanning": {
+                "type": "object",
+                "description": "Configuration of file upload scanner service",
+                "properties": {
+                    "Host": {
+                        "type": "string",
+                        "description": "Host name of the upload scanner service"
+                    },
+                    "Port": {
+                        "type": "integer",
+                        "description": "Port on with the upload scanner service runs"
+                    },
+                    "Mode": {
+                        "type": "string",
+                        "enum": ["Require", "DisabledWithWarning"],
+                        "description": "Upload scanning mode. 'DisabledWithWarning' is runtime validated and only allowed in Development Mode. In Production, only 'Required' is allowed.",
+                        "default": "Require"
+                    }
+                }
+            }
+        }
+    }
+  ]
+}

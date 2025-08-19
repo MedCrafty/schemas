@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MedCraft local appsettings (extended)",
+  "description": "Local development settings for MedCraft application appsettings files. Extends base appsettings.json with additional custom application properties that are only supported in development build configurations.",
+  "allOf": [
+    { "$ref": "https://json.schemastore.org/appsettings.json" },
+    {
+      "type": "object",
+      "description": "Configurations for local development build configurations.",
+      "properties": {
+        "NoAuthConfig": {
+          "type": "object",
+          "description": "An object that simulates user authentication information in the development authentication bypass configuration. Used to simulate specific users and roles without having to run through an actual 3rd party OIDC authentication.",
+          "properties": {
+            "User": {
+              "type": "object",
+              "description": "Simulated user information",
+              "properties": {
+                "ID": {
+                  "type": "string",
+                  "description": "Simulated user ID",
+                  "format": "uuid",
+                  "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                  "default": "00000000-0000-0000-0000-000000000000"
+                },
+                "DisplayName": {
+                  "type": [ "string", "null" ],
+                  "description": "Simulated user display name",
+                  "default": "No Auth User"
+
+                },
+                "Mail": {
+                  "type": [ "string", "null" ],
+                  "description": "Simulated user email",
+                  "format": "email"
+                }
+              }
+            },
+            "IsAdmin": {
+              "type": "boolean",
+              "description": "Simulates user being assigned the custom Azure AD Administrator role, allowing all prermissions",
+              "default": false
+            },
+            "TenantId": {
+              "type": "string",
+              "description": "Simulated tenant ID",
+              "format": "uuid",
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "default": "00000000-0000-0000-0000-000000000000"
+            },
+            "Instances": {
+              "type": "array",
+              "description": "List of simulated instance authorization information",
+              "items": {
+                "type": "object",
+                "description": "Simulated instance authorization",
+                "properties": {
+                  "Name": {
+                    "type": "string",
+                    "description": "Simulated instance name",
+                    "default": ""
+                  },
+                  "InstanceId": {
+                    "type": "string",
+                    "description": "Simulated instance ID for url"
+                  },
+                  "Roles": {
+                    "type": "array",
+                    "description": "List of simulated Role IDs (currently needs to match real IDs in the database for a matching instance ID)",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "Permissions": {
+                    "type": "array",
+                    "description": "List of simulated permissions",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "Roles.Edit",
+                        "Script.Edit",
+                        "UserRoles.Edit",
+                        "DatabaseSync",
+                        "GenerateBuild"
+                      ]
+                    }
+                  },
+                  "Default": {
+                    "type": "boolean",
+                    "description": "Simulates if the instance is default. Only one instance should be marked as default to remain unambiguous.",
+                    "default": false
+                  },
+                  "Expired": {
+                    "type": "boolean",
+                    "description": "Simulates if the instance is expired",
+                    "default": false
+                  }
+                },
+                "required": [ "InstanceId" ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "description": "Mirrored base schema. Due to tag driven versioning, stable references are tricky as the version tag isn't applied until publishing. To solve,  mirror that definition here for any given verision.",
+      "properties": {
+        "UploadScanning": {
+          "type": "object",
+          "description": "Configuration of file upload scanner service",
+          "properties": {
+            "Host": {
+              "type": "string",
+              "description": "Host name of the upload scanner service"
+            },
+            "Port": {
+              "type": "integer",
+              "description": "Port on with the upload scanner service runs"
+            },
+            "Mode": {
+              "type": "string",
+              "enum": [ "Require", "DisabledWithWarning" ],
+              "description": "Upload scanning mode. 'DisabledWithWarning' is runtime validated and only allowed in Development Mode. In Production, only 'Required' is allowed.",
+              "default": "Require"
+            }
+          }
+        }
+      }
+    }
+  ]
+}
