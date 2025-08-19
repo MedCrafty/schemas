@@ -1,0 +1,44 @@
+name: Publish schema (Pages)
+
+on:
+  push:
+    tags:
+    - "v[0-9]+.[0-9]+.[0-9]+*"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - name: Build site
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          set -eu
+          mkdir -p _site
+          # Copy the unversioned tree as-is
+          rsync -a schema/ _site/
+
+          # For each *.schema.json, also make a versioned sibling: name.{VERSION}.schema.json
+          find _site -type f -name '*.schema.json' | while read -r f; do
+            dir=$(dirname "$f"); base=$(basename "$f" .schema.json)
+            cp "$f" "$dir/${base}.${VERSION}.schema.json"
+          done
+
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: _site }
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: { name: github-pages }
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
