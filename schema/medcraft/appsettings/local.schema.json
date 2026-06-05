@@ -8,38 +8,21 @@
       "type": "object",
       "description": "Configurations for local development build configurations.",
       "properties": {
-        "NoAuthConfig": {
+        "NoAuth": {
           "type": "object",
           "description": "An object that simulates user authentication information in the development authentication bypass configuration. Used to simulate specific users and roles without having to run through an actual 3rd party OIDC authentication.",
           "properties": {
-            "User": {
-              "type": "object",
-              "description": "Simulated user information",
-              "properties": {
-                "ID": {
-                  "type": "string",
-                  "description": "Simulated user ID",
-                  "format": "uuid",
-                  "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-                  "default": "00000000-0000-0000-0000-000000000000"
-                },
-                "DisplayName": {
-                  "type": [ "string", "null" ],
-                  "description": "Simulated user display name",
-                  "default": "No Auth User"
-
-                },
-                "Mail": {
-                  "type": [ "string", "null" ],
-                  "description": "Simulated user email",
-                  "format": "email"
-                }
-              }
-            },
-            "IsAdmin": {
+            "Enabled": {
               "type": "boolean",
-              "description": "Simulates user being assigned the custom Azure AD Administrator role, allowing all prermissions",
+              "description": "Enables the no-auth bypass. Only permitted in development build configurations.",
               "default": false
+            },
+            "UserId": {
+              "type": "string",
+              "description": "Simulated user ID",
+              "format": "uuid",
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "default": "00000000-0000-0000-0000-000000000000"
             },
             "TenantId": {
               "type": "string",
@@ -48,56 +31,19 @@
               "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
               "default": "00000000-0000-0000-0000-000000000000"
             },
-            "Instances": {
-              "type": "array",
-              "description": "List of simulated instance authorization information",
-              "items": {
-                "type": "object",
-                "description": "Simulated instance authorization",
-                "properties": {
-                  "Name": {
-                    "type": "string",
-                    "description": "Simulated instance name",
-                    "default": ""
-                  },
-                  "InstanceId": {
-                    "type": "string",
-                    "description": "Simulated instance ID for url"
-                  },
-                  "Roles": {
-                    "type": "array",
-                    "description": "List of simulated Role IDs (currently needs to match real IDs in the database for a matching instance ID)",
-                    "items": {
-                      "type": "number"
-                    }
-                  },
-                  "Permissions": {
-                    "type": "array",
-                    "description": "List of simulated permissions",
-                    "items": {
-                      "type": "string",
-                      "enum": [
-                        "Roles.Edit",
-                        "Script.Edit",
-                        "UserRoles.Edit",
-                        "DatabaseSync",
-                        "GenerateBuild"
-                      ]
-                    }
-                  },
-                  "Default": {
-                    "type": "boolean",
-                    "description": "Simulates if the instance is default. Only one instance should be marked as default to remain unambiguous.",
-                    "default": false
-                  },
-                  "Expired": {
-                    "type": "boolean",
-                    "description": "Simulates if the instance is expired",
-                    "default": false
-                  }
-                },
-                "required": [ "InstanceId" ]
-              }
+            "DisplayName": {
+              "type": [ "string", "null" ],
+              "description": "Simulated user display name. Defaults to UserId when absent."
+            },
+            "Email": {
+              "type": [ "string", "null" ],
+              "description": "Simulated user email",
+              "format": "email"
+            },
+            "IsAdmin": {
+              "type": "boolean",
+              "description": "Simulates user being assigned the custom Azure AD Administrator role, allowing all permissions. Set to false to smoke-test 403 behavior.",
+              "default": true
             }
           }
         }
